@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, SiteContent } from './types';
-import { MOCK_USERS, INITIAL_SITE_CONTENT } from './constants';
+import { User, UserRole, SiteContent, Student, Class } from './types';
+import { MOCK_USERS, INITIAL_SITE_CONTENT, MOCK_STUDENTS, MOCK_CLASSES } from './constants';
 import PublicSite from './pages/PublicSite';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
@@ -13,6 +13,10 @@ import StaffDashboard from './pages/StaffDashboard';
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [siteContent, setSiteContent] = useState<SiteContent>(INITIAL_SITE_CONTENT);
+  const [users, setUsers] = useState<User[]>(MOCK_USERS);
+  const [students, setStudents] = useState<Student[]>(MOCK_STUDENTS);
+  const [classes, setClasses] = useState<Class[]>(MOCK_CLASSES);
+  
   const [currentHash, setCurrentHash] = useState<string>(() => {
     return window.location.hash.replace(/^#\/?/, '') || 'home';
   });
@@ -45,19 +49,37 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     if (!currentUser) {
-      if (currentHash === 'login') return <Login onLogin={handleLogin} users={MOCK_USERS} />;
+      if (currentHash === 'login') return <Login onLogin={handleLogin} users={users} />;
       return <PublicSite content={siteContent} />;
     }
 
     switch (currentUser.role) {
       case UserRole.ADMIN:
-        return <AdminDashboard user={currentUser} onLogout={handleLogout} siteContent={siteContent} onUpdateSite={setSiteContent} />;
+        return (
+          <AdminDashboard 
+            user={currentUser} 
+            onLogout={handleLogout} 
+            siteContent={siteContent} 
+            onUpdateSite={setSiteContent}
+            users={users}
+            setUsers={setUsers}
+            students={students}
+          />
+        );
       case UserRole.DIRECTOR:
         return <DirectorDashboard user={currentUser} onLogout={handleLogout} />;
       case UserRole.TEACHER:
-        return <TeacherPortal user={currentUser} onLogout={handleLogout} />;
+        return (
+          <TeacherPortal 
+            user={currentUser} 
+            onLogout={handleLogout} 
+            students={students}
+            setStudents={setStudents}
+            classes={classes}
+          />
+        );
       case UserRole.PARENT:
-        return <ParentPortal user={currentUser} onLogout={handleLogout} />;
+        return <ParentPortal user={currentUser} onLogout={handleLogout} students={students} />;
       case UserRole.STAFF:
         return <StaffDashboard user={currentUser} onLogout={handleLogout} />;
       default:
