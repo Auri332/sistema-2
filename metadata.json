@@ -1,0 +1,7 @@
+{
+  "name": "Copy of Copy of Copy of Copy of Copy of Pequenos Brilhantes - Plataforma de Gestão Escolar",
+  "description": "Uma plataforma completa para gestão de creches infantis, incluindo site institucional, portal administrativo e área do professor com relatórios baseados em IA.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
