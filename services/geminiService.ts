@@ -1,17 +1,12 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const getApiKey = () => {
-  return process.env.API_KEY || (import.meta as any).env.VITE_API_KEY || "";
-};
+// SDK initialization logic following the @google/genai coding guidelines.
+// Always use process.env.API_KEY directly and instantiate inside the functions.
 
 export const generateEducationalInsights = async (studentData: any) => {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    return "O Mentor IA está desativado (Chave API ausente). Configure a variável VITE_API_KEY.";
-  }
-
-  const ai = new GoogleGenAI({ apiKey });
+  // Use a new instance to ensure up-to-date API key access.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
     const response = await ai.models.generateContent({
@@ -30,18 +25,16 @@ export const generateEducationalInsights = async (studentData: any) => {
       3. MENSAGEM AOS PAIS: Uma nota positiva para ser enviada via app.`,
     });
     
+    // Use .text property (not a function) to extract the string result.
     return response.text || "Não foi possível gerar a análise no momento.";
   } catch (error) {
     console.error("Erro no Mentor IA:", error);
-    return "O Mentor IA encontrou um erro técnico. Verifique se sua chave API é válida e tem créditos.";
+    return "O Mentor IA encontrou um erro técnico.";
   }
 };
 
 export const generateNewsletter = async (schoolEvents: string[]) => {
-  const apiKey = getApiKey();
-  if (!apiKey) return "Erro: API Key não configurada.";
-
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
     const response = await ai.models.generateContent({
@@ -49,6 +42,7 @@ export const generateNewsletter = async (schoolEvents: string[]) => {
       contents: `Crie um boletim semanal acolhedor para os pais da creche com base nestes eventos: ${schoolEvents.join(", ")}. 
       Use um tom doce, emojis e organize em tópicos.`,
     });
+    // Use .text property directly.
     return response.text || "Erro ao formatar boletim.";
   } catch (error) {
     console.error("Erro no Newsletter IA:", error);

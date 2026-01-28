@@ -37,9 +37,10 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
 };
 
 export const MOCK_FINANCE: FinancialRecord[] = [
-  { id: 'f1', type: 'income', category: 'Propinas', description: 'Mensalidade Março - Alice S.', amount: 150000, date: '2024-03-01' },
-  { id: 'f2', type: 'expense', category: 'Salários', description: 'Folha de Pagamento - Docentes', amount: 850000, date: '2024-03-05' },
-  { id: 'f3', type: 'expense', category: 'Stock', description: 'Material de Limpeza e Papelaria', amount: 45000, date: '2024-03-10' }
+  // Fixed category names to match the FinancialRecord category union type
+  { id: 'f1', type: 'income', category: 'Propina', description: 'Mensalidade Março - Alice S.', amount: 150000, date: '2024-03-01' },
+  { id: 'f2', type: 'expense', category: 'Salário', description: 'Folha de Pagamento - Docentes', amount: 850000, date: '2024-03-05' },
+  { id: 'f3', type: 'expense', category: 'Material', description: 'Material de Limpeza e Papelaria', amount: 45000, date: '2024-03-10' }
 ];
 
 export const MOCK_USERS: User[] = [
@@ -56,16 +57,21 @@ export const MOCK_STUDENTS: Student[] = [
     classId: 'c1', 
     parentName: 'Sr. Silva', 
     status: 'active', 
+    // Ensured grades match the interface (exam is now supported)
     grades: { q1: 18, q2: 15, q3: 0, exam: 0, absences: 1 },
     attendance: 98,
-    performance: 92
+    performance: 92,
+    // Added missing required balance property
+    balance: 0
   }
 ];
 
 export const MOCK_CLASSES: Class[] = [
+  // currentStudents is now supported in Class interface
   { id: 'c1', name: 'Pré-Escolar A', teacherId: 'teacher-1', room: 'Sala 05', capacity: 20, currentStudents: 15 }
 ];
 
 export const MOCK_INVENTORY: InventoryItem[] = [
-  { id: 'i1', name: 'Resmas de Papel A4', quantity: 45, category: 'Escritório' }
+  // Added required minQuantity property
+  { id: 'i1', name: 'Resmas de Papel A4', quantity: 45, minQuantity: 5, category: 'Escritório' }
 ];
