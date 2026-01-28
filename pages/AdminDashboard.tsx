@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Button, Input, Badge, StatsCard } from '../components/Shared';
 import { User, SiteContent, SitePage, FinancialRecord } from '../types';
 import { MOCK_USERS, MOCK_FINANCE } from '../constants';
@@ -15,6 +15,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout, siteCon
   const [activeTab, setActiveTab] = useState<'users' | 'finance' | 'site' | 'pages'>('site');
   const [editContent, setEditContent] = useState(siteContent);
   const [editingPage, setEditingPage] = useState<SitePage | null>(null);
+  const [missingKeys, setMissingKeys] = useState({ gemini: false, supabase: false });
+
+  useEffect(() => {
+    const env = (import.meta as any).env || {};
+    setMissingKeys({
+      gemini: !(process.env.API_KEY || env.VITE_API_KEY),
+      supabase: !(process.env.SUPABASE_ANON_KEY || env.VITE_SUPABASE_ANON_KEY)
+    });
+  }, []);
 
   const handleSaveSite = () => {
     onUpdateSite(editContent);
@@ -78,8 +87,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout, siteCon
       </aside>
 
       {/* CONTENT AREA */}
-      <main className="flex-1 overflow-y-auto p-6 md:p-12">
-        <div className="max-w-4xl mx-auto">
+      <main className="flex-1 overflow-y-auto">
+        {(missingKeys.gemini || missingKeys.supabase) && (
+          <div className="bg-amber-100 border-b border-amber-200 text-amber-800 p-3 text-center text-xs font-bold flex items-center justify-center gap-4 sticky top-0 z-50">
+            <span>⚠️ AVISO PARA O ADMIN:</span>
+            {missingKeys.supabase && <span className="bg-amber-200 px-2 py-0.5 rounded">Falta Supabase (Nuvem)</span>}
+            {missingKeys.gemini && <span className="bg-amber-200 px-2 py-0.5 rounded">Falta Gemini (IA)</span>}
+            <span className="opacity-70 font-normal">Isso não aparece para os pais, configure as chaves na sua plataforma de hospedagem.</span>
+          </div>
+        )}
+
+        <div className="max-w-4xl mx-auto p-6 md:p-12">
           
           {/* ABA: EDITAR SITE BASE */}
           {activeTab === 'site' && (

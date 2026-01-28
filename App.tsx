@@ -17,27 +17,11 @@ const App: React.FC = () => {
     return window.location.hash.replace(/^#\/?/, '') || 'home';
   });
 
-  const [missingKeys, setMissingKeys] = useState<{gemini: boolean, supabase: boolean}>({
-    gemini: false,
-    supabase: false
-  });
-
   useEffect(() => {
     const handleHashChange = () => {
       setCurrentHash(window.location.hash.replace(/^#\/?/, '') || 'home');
     };
     window.addEventListener('hashchange', handleHashChange);
-
-    // Verificação de chaves
-    const env = (import.meta as any).env || {};
-    const hasGemini = !!(process.env.API_KEY || env.VITE_API_KEY);
-    const hasSupabaseKey = !!(process.env.SUPABASE_ANON_KEY || env.VITE_SUPABASE_ANON_KEY);
-    
-    setMissingKeys({
-      gemini: !hasGemini,
-      supabase: !hasSupabaseKey
-    });
-
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
@@ -83,14 +67,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen font-sans bg-gray-50 text-gray-900">
-      {(missingKeys.gemini || missingKeys.supabase) && (
-        <div className="bg-amber-500 text-white text-[10px] py-1.5 px-4 text-center font-bold sticky top-0 z-[9999] shadow-lg flex items-center justify-center gap-4">
-          <span>⚠️ CONFIGURAÇÃO:</span>
-          {missingKeys.supabase && <span className="bg-white/20 px-2 py-0.5 rounded">Falta Chave Supabase (Anon Key)</span>}
-          {missingKeys.gemini && <span className="bg-white/20 px-2 py-0.5 rounded">Falta Chave Gemini (IA)</span>}
-          <span className="opacity-70 text-[8px] hidden md:inline">Adicione as variáveis VITE_ nas configurações da Vercel.</span>
-        </div>
-      )}
       {renderContent()}
     </div>
   );
